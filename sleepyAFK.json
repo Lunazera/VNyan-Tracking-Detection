@@ -1,5 +1,5 @@
 {
-    "graphName": "Sleepy",
+    "graphName": "AFK",
     "graphIsActive": true,
     "nodes": [
         {
@@ -461,6 +461,18 @@
                 "29c44dd0-1875-459c-a3b9-953fe46660ae638485441486161570"
             ],
             "headerColor": 0
+        },
+        {
+            "id": "62182a48-787c-4fc3-9f23-175391434382",
+            "values": [],
+            "posX": -908.0001220703125,
+            "posY": 406.66693115234377,
+            "path": "Nodes/AppStartNode",
+            "inputSocketIds": [],
+            "outputSocketIds": [
+                "4fe884f6-b8c5-49d9-a15e-1870ea8e2094638485447749816013"
+            ],
+            "headerColor": 0
         }
     ],
     "connections": [
@@ -558,6 +570,11 @@
             "id": "b83092b5-d41c-4fb5-a0e8-ed83b83a5702",
             "outputSocketId": "29c44dd0-1875-459c-a3b9-953fe46660ae638485441486161570",
             "inputSocketId": "41ae8740-7445-43c2-bd4b-a90412d32e59638394539002784322"
+        },
+        {
+            "id": "710851f5-1e11-4f1e-9231-fdcdea81dd91",
+            "outputSocketId": "4fe884f6-b8c5-49d9-a15e-1870ea8e2094638485447749816013",
+            "inputSocketId": "9d78d900-34a8-4d3d-8d7f-bbb34fdfe1d5638485433615370641"
         }
     ]
 }
