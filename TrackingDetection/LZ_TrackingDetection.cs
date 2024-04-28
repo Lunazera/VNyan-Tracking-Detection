@@ -13,12 +13,15 @@ namespace LZ_TrackingDetection
         public string trackDetectName = "TrackingDetected";
 
         [Header("Number of samples to calculate")]
+        public string parameterNameInputSamples = "LZ_TrackDetect_Samples";
         public int nSamples = 10;
 
         [Header("Sensitivity (how small variance to detect)")]
-        public float sensitivity = 1;
+        public string parameterNameInputSensitivity = "LZ_TrackDetect_Sensitivity";
+        public float sensitivity = 0.1f;
 
         [Header("Time until Tracking Lost (in ms)")]
+        public string parameterNameInputTimeoutTime = "LZ_TrackDetect_TimeoutTime";
         public float trackTime = 3000;
         private float updateSpeed = 0;  // The update speed of the script will scale based on Tracking Lost time (time / number of samples)
 
@@ -51,16 +54,21 @@ namespace LZ_TrackingDetection
 
         void Start()
         {
-            // Calculate update speed based on our sample size and Time for tracking lost
-            updateSpeed = trackTime / nSamples;
-
             // Re-initialize our container with our sample size
             lastNSamples = new float[nSamples];
             if (!(VNyanInterface.VNyanInterface.VNyanParameter == null))
             {
                 VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackVarName, (float)trackVariance);
                 VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackDetectName, 0.0f);
+
+                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(parameterNameInputSamples, (float)nSamples);
+                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(parameterNameInputSensitivity, sensitivity);
+                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(parameterNameInputTimeoutTime, trackTime);
+
             }
+
+            // Calculate update speed based on our sample size and Time for tracking lost
+            updateSpeed = trackTime / nSamples;
         }
 
         // Update is called once per frame
@@ -72,6 +80,14 @@ namespace LZ_TrackingDetection
                 timeElapsed = 0.0f;
                 if (!(VNyanInterface.VNyanInterface.VNyanParameter == null))
                 {
+                    // Get New values for our parameters
+                    nSamples = (int)VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputSamples);
+                    sensitivity = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputSensitivity);
+                    trackTime = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputTimeoutTime);
+
+                    // Calculate update speed based on our sample size and Time for tracking lost
+                    updateSpeed = trackTime / nSamples;
+
                     // Get current blendshape values
                     CheckVal1a = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("eyeWideLeft");
                     CheckVal1a = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("eyeWideRight");
