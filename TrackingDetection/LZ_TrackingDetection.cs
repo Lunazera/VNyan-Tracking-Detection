@@ -7,14 +7,10 @@ namespace LZ_TrackingDetection
 {
     public class LZ_TrackingDetection : MonoBehaviour
     {
-        // Set public variables to be used by script
-        [Header("Output Variables")]
-        public string trackVarName = "TrackingVariance";
-        public string trackDetectName = "TrackingDetected";
-
+        // Set public variables
         [Header("Number of samples to calculate")]
         public string parameterNameInputSamples = "LZ_TrackDetect_Samples";
-        public int nSamples = 10;
+        public int nSamples = 30;
 
         [Header("Sensitivity (how small variance to detect)")]
         public string parameterNameInputSensitivity = "LZ_TrackDetect_Sensitivity";
@@ -23,48 +19,48 @@ namespace LZ_TrackingDetection
         [Header("Time until Tracking Lost (in ms)")]
         public string parameterNameInputTimeoutTime = "LZ_TrackDetect_TimeoutTime";
         public float trackTime = 3000;
-        private float updateSpeed = 0;  // The update speed of the script will scale based on Tracking Lost time (time / number of samples)
+
+        [Header("Comma separated list of blendshapes to read from")]
+        public string parameterNameInputBlendshapes = "LZ_TrackDetect_Blendshapes";
+        public string blendshapesToRead = "";
 
         // Set private variables
         private float[] lastNSamples = new float[0];
         private float timeElapsed = 0.0f;
 
-        // Set up container variables to store the blendshape readouts
-        private float CheckVal1a = 0.0f;
-        private float CheckVal1b = 0.0f;
-        private float CheckVal2a = 0.0f;
-        private float CheckVal2b = 0.0f;
-        private float CheckVal3a = 0.0f;
-        private float CheckVal3b = 0.0f;
-        private float CheckVal4a = 0.0f;
-        private float CheckVal4b = 0.0f;
+        // The update speed of the script will scale based on Tracking Lost time (time / number of samples)
+        private float updateSpeed = 0;
+
+        private string trackVarName = "LZ_TrackDetect_Variance";
+        private string trackFlagName = "LZ_TrackDetect_Flag";
+        private int LZ_TrackDetect_Flag = 0;  // 1 = detected, 0 = lost
 
         // Will be used to combine all the blendshapes into one parameter, we dont need to track individually
         private float CheckValCombined = 0.0f;
 
         // List of floats to track the last 60 frames of data
-        
         private int sampleIndex = 0;  // We will keep the array a constant size and instead replace items in it cyclically
         private float sumSamples = 0.0f;
         private float meanSamples = 0.0f;
-        
+
 
         // Variables for final output
         private float trackVariance = 0.0f;
 
+        // Initial run of script
         void Start()
         {
             // Re-initialize our container with our sample size
             lastNSamples = new float[nSamples];
+
+            // Set parameters in VNyan according to parameters from script settings (later pulled from/saved in settings json)
             if (!(VNyanInterface.VNyanInterface.VNyanParameter == null))
             {
-                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackVarName, (float)trackVariance);
-                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackDetectName, 0.0f);
-
-                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(parameterNameInputSamples, (float)nSamples);
+                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackVarName, trackVariance);
                 VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(parameterNameInputSensitivity, sensitivity);
                 VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(parameterNameInputTimeoutTime, trackTime);
-
+                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterString(parameterNameInputBlendshapes, blendshapesToRead);
+                VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackFlagName, LZ_TrackDetect_Flag);
             }
 
             // Calculate update speed based on our sample size and Time for tracking lost
@@ -75,37 +71,31 @@ namespace LZ_TrackingDetection
         void Update()
         {
             timeElapsed = timeElapsed + Time.deltaTime;
-            if (timeElapsed >= updateSpeed/1000)
+            if (timeElapsed >= updateSpeed / 1000)
             {
                 timeElapsed = 0.0f;
                 if (!(VNyanInterface.VNyanInterface.VNyanParameter == null))
                 {
                     // Get New values for our parameters
-                    nSamples = (int)VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputSamples);
                     sensitivity = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputSensitivity);
                     trackTime = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputTimeoutTime);
+                    blendshapesToRead = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterString(parameterNameInputBlendshapes);
 
                     // Calculate update speed based on our sample size and Time for tracking lost
                     updateSpeed = trackTime / nSamples;
 
-                    // Get current blendshape values
-                    CheckVal1a = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("eyeWideLeft");
-                    CheckVal1a = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("eyeWideRight");
-                    CheckVal2a = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("BrowDownLeft");
-                    CheckVal2b = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("BrowDownRight");
-                    CheckVal3a = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("MouthSmileLeft");
-                    CheckVal3b = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("MouthSmileRight");
-                    CheckVal4a = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("EyeLookUpLeft");
-                    CheckVal4b = VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant("EyeLookUpRight");
 
-                    // Get current frame index (mod 60 has it loop
+                    CheckValCombined = 0;
+                    foreach (string blendshapeString in blendshapesToRead.Split(','))
+                    {
+                        CheckValCombined = CheckValCombined + VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant(blendshapeString.Trim());
+                    }
+
+                    // Get current frame index (mod 60 has it loop)
                     sampleIndex = (sampleIndex + 1) % nSamples;
 
-                    // Combine our check values
-                    CheckValCombined = (CheckVal1a + CheckVal1b + CheckVal2a + CheckVal2b + CheckVal3a + CheckVal3b + CheckVal4a + CheckVal4b) * 100;
-
-                    // insert into the array
-                    lastNSamples[sampleIndex] = CheckValCombined;
+                    // insert into the array to keep our samples across frames. We scale by 100 just to keep the numbers from getting to small.
+                    lastNSamples[sampleIndex] = CheckValCombined * 100;
 
                     // Calculate sum of samples
                     sumSamples = 0;
@@ -127,16 +117,29 @@ namespace LZ_TrackingDetection
                     // Output into parameter
                     VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackVarName, (float)trackVariance);
 
+                    // Signal tracking state through parameter and trigger
                     if (trackVariance > sensitivity)
                     {
-                        VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackDetectName, 1.0f);
+                        if (LZ_TrackDetect_Flag == 0)
+                        {
+                            LZ_TrackDetect_Flag = 1;
+                            VNyanInterface.VNyanInterface.VNyanTrigger.callTrigger("TrackingDetected");
+                            VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackFlagName, LZ_TrackDetect_Flag);
+                        }
                     }
                     else
                     {
-                        VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackDetectName, 0.0f);
+                        if (LZ_TrackDetect_Flag == 1)
+                        {
+                            LZ_TrackDetect_Flag = 0;
+                            VNyanInterface.VNyanInterface.VNyanTrigger.callTrigger("TrackingLost");
+                            VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackFlagName, LZ_TrackDetect_Flag);
+                        }
                     }
                 }
             }
         }
     }
 }
+
+
