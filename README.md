@@ -22,3 +22,5 @@ Minimum blendshape variance until tracking is considered "lost".
 Time in milliseconds that blendshape variance must stay below the *Sensitivity* value until tracking is considered "lost".
 #### Blendshapes
 List of blendshapes to use in tracking detection. You can add or remove any blendshapes you want for this to listen to. Must be separated by comma's `,`.
+
+*Credit to Sjatar for UI code template*
