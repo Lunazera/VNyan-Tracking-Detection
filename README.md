@@ -1,5 +1,5 @@
 # VNyan Face Tracking Detection
-Plugin to detect when your model loses tracking (ie when you go AFK). This uses some of your tracked blendshapes and calculates the variance to determine when VNyan loses tracking.
+Plugin to detect when your model loses tracking (ie when you go AFK). This uses some of your tracked blendshapes and calculates the total variance over a small window of time to determine when VNyan loses tracking.
 
 When tracking is lost, the `TrackingLost` trigger will signal.
 When tracking is found again, the `TrackingDetected` trigger will signal.
