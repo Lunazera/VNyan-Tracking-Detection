@@ -1,12 +1,12 @@
 # LZ's Face Tracking Detection for VNyan
 Plugin to detect when your model loses tracking (ie when you go AFK). This uses some of your tracked blendshapes and calculates the total variance over a small window of time to determine when VNyan loses tracking.
 
-When tracking is lost, the `TrackingLost` trigger will signal.
-When tracking is found again, the `TrackingDetected` trigger will signal.
+## How To Use
+You can create Trigger nodes with these trigger names in your graphs to set what happens when tracking is lost or found.
+- When tracking is lost, the `TrackingLost` trigger will signal.
+- When tracking is found again, the `TrackingDetected` trigger will signal.
 
-You can create Trigger nodes with these trigger names in your graphs to set what happens when tracking is lost or found. The current tracking state is also saved under the parameter `LZ_TrackDetect_Flag`.
-
-All exposed parameters can be found in the monitor with the prefix `LZ_TrackDetect_`
+The current tracking state is also saved under the parameter `LZ_TrackDetect_Flag`. All exposed parameters can be found in the monitor with the prefix `LZ_TrackDetect_`
 
 ## Installation
 1. Download the latest zip file
