@@ -8,6 +8,8 @@ You can create Trigger nodes with these trigger names in your graphs to set what
 
 The current tracking state is also saved under the parameter `LZ_TrackDetect_Flag`. All exposed parameters can be found in the monitor with the prefix `LZ_TrackDetect_`
 
+You can also use the `sleepyAFK` Graph included for a simple AFK setup that will have your model close their eyes and tilt their head down when tracking is lost, then reset when it's found again.
+
 ## Installation
 1. Download the latest zip file
 2. Unzip the contents in your VNyan folder. This will put the `.dll` and `.vnobj` inside `Items/Assemblies` for you.
