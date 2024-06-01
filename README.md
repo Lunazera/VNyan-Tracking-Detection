@@ -1,6 +1,5 @@
 # LZ's Face Tracking Detection plugin for VNyan
 Plugin to detect when your model loses tracking (ie when you go AFK). This uses some of your tracked blendshapes and calculates the total variance over a small window of time to determine when VNyan loses tracking.
-![Cover image for face tracking plugin](./FaceTrackingDetection_Image.png)
 
 ## How To Use
 You can create Trigger nodes with these trigger names in your graphs to set what happens when tracking is lost or found.
