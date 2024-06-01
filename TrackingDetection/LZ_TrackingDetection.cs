@@ -123,7 +123,7 @@ namespace LZ_TrackingDetection
                         if (LZ_TrackDetect_Flag == 0)
                         {
                             LZ_TrackDetect_Flag = 1;
-                            VNyanInterface.VNyanInterface.VNyanTrigger.callTrigger("TrackingDetected");
+                            VNyanInterface.VNyanInterface.VNyanTrigger.callTrigger("TrackingFound");
                             VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackFlagName, LZ_TrackDetect_Flag);
                         }
                     }
