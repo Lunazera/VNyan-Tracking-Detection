@@ -4,7 +4,7 @@ Plugin to detect when your model loses tracking (ie when you go AFK). This uses 
 ## How To Use
 You can create Trigger nodes with these trigger names in your graphs to set what happens when tracking is lost or found.
 - The `TrackingLost` trigger will signal when tracking is lost.
-- The `TrackingDetected` trigger will signal when tracking is found again.
+- The `TrackingFound` trigger will signal when tracking is found again.
 
 The current tracking state is also saved under the parameter `LZ_TrackDetect_Flag`. All exposed parameters can be found in the monitor with the prefix `LZ_TrackDetect_`
 
