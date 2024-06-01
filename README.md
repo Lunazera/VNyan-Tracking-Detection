@@ -14,3 +14,11 @@ All exposed parameters can be found in the monitor with the prefix `LZ_TrackDete
 3. The plugin should be present when you load VNyan! (you should see it in the plugin menu.
 
 *Note: Remember to enable 3rd party plugins in VNyan under `Menu/Settings/Misc`*
+
+## Plugin Menu Settings
+#### Sensitivity
+Minimum blendshape variance until tracking is considered "lost".
+#### Tracking Timout (ms)
+Time in milliseconds that blendshape variance must stay below the *Sensitivity* value until tracking is considered "lost".
+#### Blendshapes
+List of blendshapes to use in tracking detection. You can add or remove any blendshapes you want for this to listen to. Must be separated by comma's `,`.
