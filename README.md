@@ -16,6 +16,7 @@ You can also use the `sleepyAFK` Graph included for a simple AFK setup that will
 3. The plugin should be present when you load VNyan! (you should see it in the plugin menu.
 
 *Note: Remember to enable 3rd party plugins in VNyan under `Menu/Settings/Misc`*
+*You will also need at least v1.4.0*
 
 ## Plugin Menu Settings
 #### Sensitivity
