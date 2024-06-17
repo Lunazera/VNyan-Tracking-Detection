@@ -1,5 +1,5 @@
-# LZ's Face Tracking Detection for VNyan
-Plugin to detect when your model loses tracking (ie when you go AFK). This uses some of your tracked blendshapes and calculates the total variance over a small window of time to determine when VNyan loses tracking.
+# LZ's Face Tracking Detection plugin for VNyan
+Plugin to detect when your model loses tracking (ie when you go AFK). This uses some of your tracked blendshapes and calculates the total variance over a small window of time to determine when VNyan loses tracking. By default this uses ARKit blendshapes, but you can change those to be any blendshapes you want in the settings (though they'd need to be related to your face tracking in some way).
 
 ## How To Use
 You can create Trigger nodes with these trigger names in your graphs to set what happens when tracking is lost or found.
@@ -11,11 +11,12 @@ The current tracking state is also saved under the parameter `LZ_TrackDetect_Fla
 You can also use the `sleepyAFK` Graph included for a simple AFK setup that will have your model close their eyes and tilt their head down when tracking is lost, then reset when it's found again.
 
 ## Installation
-1. Download the latest zip file
+1. Download the latest zip file from [releases](https://github.com/Lunazera/VNyan-Tracking-Detection/releases/)
 2. Unzip the contents in your VNyan folder. This will put the `.dll` and `.vnobj` inside `Items/Assemblies` for you.
 3. The plugin should be present when you load VNyan! (you should see it in the plugin menu.
 
 *Note: Remember to enable 3rd party plugins in VNyan under `Menu/Settings/Misc`*
+*You will also need at least v1.4.0*
 
 ## Plugin Menu Settings
 #### Sensitivity
