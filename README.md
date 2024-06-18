@@ -19,6 +19,7 @@ You can also use the `sleepyAFK` Graph included for a simple AFK setup that will
 *You will also need at least v1.4.0*
 
 ## Plugin Menu Settings
+*Make sure to hit Apply after making any changes so that the plugin can start using those changes!!*
 #### Sensitivity
 Minimum blendshape variance until tracking is considered "lost".
 #### Tracking Timout (ms)
