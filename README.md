@@ -32,4 +32,5 @@ Here is the list of blendshapes I use as a default. This generally works for me,
 eyeWideLeft, eyeWideRight, BrowDownLeft, BrowDownRight, MouthSmileLeft, MouthSmileRight, EyeLookUpLeft, EyeLookUpRight
 ``` 
 
-*Credit to Sjatar for their UI code which this UI is adapted from.*
+*VNyan is credited to [Suvidriel](https://suvidriel.itch.io/vnyan)*
+*Credit to [Sjatar](https://github.com/Sjatar/Screen-Light) for their UI code which this UI is adapted from.*
