@@ -33,4 +33,5 @@ eyeWideLeft, eyeWideRight, BrowDownLeft, BrowDownRight, MouthSmileLeft, MouthSmi
 ``` 
 
 *VNyan is credited to [Suvidriel](https://suvidriel.itch.io/vnyan)*
-*Credit to [Sjatar](https://github.com/Sjatar/Screen-Light) for their UI code which this UI is adapted from.*
+
+*Special thanks to [Sjatar](https://github.com/Sjatar/Screen-Light) for their UI code which this UI is adapted from.*
