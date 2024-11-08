@@ -27,9 +27,9 @@ Time in milliseconds that blendshape variance must stay below the *Sensitivity* 
 #### Blendshapes
 List of blendshapes to use in tracking detection. You can add or remove any blendshapes you want for this to listen to. Must be separated by comma's `,`.
 
-Here is the list of blendshapes I use as a default. This generally works for me, but you can add/remove to what works best for your tracking situation. The important thing is that at least *some* of the blendshapes in this list are tracked (which you can double check in VNyan's Monitor).
+Here is the list of blendshapes I use as a default. This generally works for me, but you can add/remove to what works best for your tracking situation. The important thing is that at least *some* of the blendshapes in this list are tracked (which you can double check in VNyan's Monitor). Also, blendshapes with spaces in their name wont work here.
 ```
-eyeWideLeft, eyeWideRight, BrowDownLeft, BrowDownRight, MouthSmileLeft, MouthSmileRight, EyeLookUpLeft, EyeLookUpRight
+eyeWideLeft; eyeWideRight; BrowDownLeft; BrowDownRight; MouthSmileLeft; MouthSmileRight; EyeLookUpLeft; EyeLookUpRight;
 ``` 
 
 *VNyan is credited to [Suvidriel](https://suvidriel.itch.io/vnyan)*
