@@ -1,28 +1,52 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using VNyanInterface;
+
+
 
 namespace LZ_TrackingDetection
 {
     public class LZ_TrackingDetection : MonoBehaviour
     {
+       
+
+        static float sampleVar(float[] lastNSamples, float nSamples, float meanSamples)
+        {
+            float var_collector = 0;
+            for (int i = 0; i < nSamples; i++)
+            {
+                var_collector += (lastNSamples[i] - meanSamples) * (lastNSamples[i] - meanSamples);
+            }
+
+            return var_collector / (nSamples - 1);
+        }
+
+        public static void getSettingsValues()
+        {
+            // Get New values for our parameters
+            sensitivity = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputSensitivity);
+            trackTime = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputTimeoutTime);
+            blendshapesToRead = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterString(parameterNameInputBlendshapes);
+        }
+
         // Set public variables
         [Header("Number of samples to calculate")]
         public string parameterNameInputSamples = "LZ_TrackDetect_Samples";
         public int nSamples = 30;
 
         [Header("Sensitivity (how small variance to detect)")]
-        public string parameterNameInputSensitivity = "LZ_TrackDetect_Sensitivity";
-        public float sensitivity = 0.1f;
+        public static string parameterNameInputSensitivity = "LZ_TrackDetect_Sensitivity";
+        public static float sensitivity = 0.1f;
 
         [Header("Time until Tracking Lost (in ms)")]
-        public string parameterNameInputTimeoutTime = "LZ_TrackDetect_TimeoutTime";
-        public float trackTime = 3000;
+        public static string parameterNameInputTimeoutTime = "LZ_TrackDetect_TimeoutTime";
+        public static float trackTime = 3000;
 
         [Header("Comma separated list of blendshapes to read from")]
-        public string parameterNameInputBlendshapes = "LZ_TrackDetect_Blendshapes";
-        public string blendshapesToRead = "";
+        public static string parameterNameInputBlendshapes = "LZ_TrackDetect_Blendshapes";
+        public static string blendshapesToRead = "";
 
         // Set private variables
         private float[] lastNSamples = new float[0];
@@ -33,7 +57,7 @@ namespace LZ_TrackingDetection
 
         private string trackVarName = "LZ_TrackDetect_Variance";
         private string trackFlagName = "LZ_TrackDetect_Flag";
-        private int LZ_TrackDetect_Flag = 0;  // 1 = detected, 0 = lost
+        public static int LZ_TrackDetect_Flag = 0;  // 1 = detected, 0 = lost
 
         // Will be used to combine all the blendshapes into one parameter, we dont need to track individually
         private float CheckValCombined = 0.0f;
@@ -43,11 +67,11 @@ namespace LZ_TrackingDetection
         private float sumSamples = 0.0f;
         private float meanSamples = 0.0f;
 
-
         // Variables for final output
         private float trackVariance = 0.0f;
 
-        // Initial run of script
+        private char[] delimChars = { ';', ',' };
+
         void Start()
         {
             // Re-initialize our container with our sample size
@@ -65,9 +89,12 @@ namespace LZ_TrackingDetection
 
             // Calculate update speed based on our sample size and Time for tracking lost
             updateSpeed = trackTime / nSamples;
+
+            sensitivity = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputSensitivity);
+            trackTime = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputTimeoutTime);
+            blendshapesToRead = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterString(parameterNameInputBlendshapes);
         }
 
-        // Update is called once per frame
         void Update()
         {
             timeElapsed = timeElapsed + Time.deltaTime;
@@ -76,43 +103,29 @@ namespace LZ_TrackingDetection
                 timeElapsed = 0.0f;
                 if (!(VNyanInterface.VNyanInterface.VNyanParameter == null))
                 {
-                    // Get New values for our parameters
                     sensitivity = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputSensitivity);
                     trackTime = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterFloat(parameterNameInputTimeoutTime);
                     blendshapesToRead = VNyanInterface.VNyanInterface.VNyanParameter.getVNyanParameterString(parameterNameInputBlendshapes);
-
                     // Calculate update speed based on our sample size and Time for tracking lost
                     updateSpeed = trackTime / nSamples;
 
-
                     CheckValCombined = 0;
-                    foreach (string blendshapeString in blendshapesToRead.Split(','))
+                    foreach (string blendshapeString in blendshapesToRead.Split(delimChars))
                     {
-                        CheckValCombined = CheckValCombined + VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant(blendshapeString.Trim());
+                        CheckValCombined += VNyanInterface.VNyanInterface.VNyanAvatar.getBlendshapeInstant(blendshapeString.Trim());
                     }
 
-                    // Get current frame index (mod 60 has it loop)
+                    // Get current frame index (mod 60 makes this loop every 60 frames)
                     sampleIndex = (sampleIndex + 1) % nSamples;
 
                     // insert into the array to keep our samples across frames. We scale by 100 just to keep the numbers from getting to small.
                     lastNSamples[sampleIndex] = CheckValCombined * 100;
 
-                    // Calculate sum of samples
-                    sumSamples = 0;
-                    for (int i = 0; i < nSamples; i++)
-                    {
-                        sumSamples += lastNSamples[i];
-                    }
-
-                    // Calculate Mean of samples
+                    sumSamples = lastNSamples.Sum();
                     meanSamples = sumSamples / nSamples;
 
                     // Calculate Variance of samples
-                    trackVariance = 0;
-                    for (int i = 0; i < nSamples; i++)
-                    {
-                        trackVariance = trackVariance + (lastNSamples[i] - meanSamples) * (lastNSamples[i] - meanSamples) / (nSamples - 1);
-                    }
+                    trackVariance = sampleVar(lastNSamples, nSamples, meanSamples);
 
                     // Output into parameter
                     VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackVarName, (float)trackVariance);
@@ -123,7 +136,7 @@ namespace LZ_TrackingDetection
                         if (LZ_TrackDetect_Flag == 0)
                         {
                             LZ_TrackDetect_Flag = 1;
-                            VNyanInterface.VNyanInterface.VNyanTrigger.callTrigger("TrackingFound");
+                            VNyanInterface.VNyanInterface.VNyanTrigger.callTrigger("TrackingFound", 0, 0, 0, "", "", "");
                             VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackFlagName, LZ_TrackDetect_Flag);
                         }
                     }
@@ -132,7 +145,7 @@ namespace LZ_TrackingDetection
                         if (LZ_TrackDetect_Flag == 1)
                         {
                             LZ_TrackDetect_Flag = 0;
-                            VNyanInterface.VNyanInterface.VNyanTrigger.callTrigger("TrackingLost");
+                            VNyanInterface.VNyanInterface.VNyanTrigger.callTrigger("TrackingLost", 0, 0, 0, "", "", "");
                             VNyanInterface.VNyanInterface.VNyanParameter.setVNyanParameterFloat(trackFlagName, LZ_TrackDetect_Flag);
                         }
                     }
