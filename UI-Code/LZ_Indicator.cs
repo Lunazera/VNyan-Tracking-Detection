@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System.IO;
 using UnityEngine.EventSystems;
 using LZ_TrackingDetection;
+using VNyanInterface;
 
 namespace LZ_TrackingDetection
 {
