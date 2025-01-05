@@ -135,8 +135,8 @@
         {
             "id": "a4a87f0a-9dc9-4db3-bd51-925b87786678",
             "values": [],
-            "posX": -74.0,
-            "posY": -122.33333587646485,
+            "posX": -27.333335876464845,
+            "posY": -120.66666412353516,
             "path": "Nodes/Ordered5Node",
             "inputSocketIds": [
                 "68fe30db-909a-4a3d-8c91-099ce8d33c6d638394571959210268"
@@ -353,8 +353,8 @@
                     "value": "TrackingLost"
                 }
             ],
-            "posX": -275.3335876464844,
-            "posY": 221.6663818359375,
+            "posX": -223.6669158935547,
+            "posY": 234.99972534179688,
             "path": "Nodes/TriggerNode",
             "inputSocketIds": [],
             "outputSocketIds": [
@@ -379,8 +379,8 @@
                     "value": "TrackingFound"
                 }
             ],
-            "posX": -396.00030517578127,
-            "posY": -46.6669921875,
+            "posX": -224.3336639404297,
+            "posY": -98.33365631103516,
             "path": "Nodes/TriggerNode",
             "inputSocketIds": [],
             "outputSocketIds": [
