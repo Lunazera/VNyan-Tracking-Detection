@@ -11,9 +11,17 @@ You can create Trigger nodes with these trigger names in your graphs to set what
 - `TrackingLostTimeout` trigger will signal when tracking is *first* lost.
 - `TrackingFoundTimeout` trigger will signal when tracking is *first* found.
 
+The "Timeout" states will trigger when tracking is first lost or found, letting you have a period of waiting to see if tracking is actually lost/found before going to the new state. Each trigger will store the tracking state it is transitioning *from* in the Text 1 socket.
+
 The current tracking state is also saved under the parameter `LZ_TrackDetect_Flag`. All exposed parameters can be found in the monitor with the prefix `LZ_TrackDetect_`
 
 You can also use the `sleepyAFK` Graph included for a simple AFK setup that will have your model close their eyes and tilt their head down when tracking is lost, then reset when it's found again.
+
+### Examples
+Example 1, say your tracking is lost and you move back towards your camera, but you don't want "tracking found" to occur until you've been in view of your camera for long enough. First, `TrackingFoundTimeout` will send a signal, with "TrackingLost" in text 1. Then, `TrackingFound` will send a signal, with "TrackingFoundTimeout" in text 1. 
+
+Example 2, say you move into view of your camera, but then move away again before the timeout is complete. First, `TrackingFoundTimeout` will send a signal, with "TrackingLost" in text 1. Then, `TrackingLost` will send a signal, with "TrackingFoundTimeout" in text 1. 
+
 
 ## Installation
 1. Download the latest zip file from [releases](https://github.com/Lunazera/VNyan-Tracking-Detection/releases/)
